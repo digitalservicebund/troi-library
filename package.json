@@ -1,0 +1,21 @@
+{
+  "name": "troi-library",
+  "version": "0.0.1",
+  "description": "API library wrapper to interact with troi",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "troi",
+    "time-tracking"
+  ],
+  "author": "Christian Kaatz <christian.kaatz@digitalservice.bund.de>",
+  "license": "MIT",
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "debug": "^4.3.4",
+    "node-fetch": "^3.2.4"
+  }
+}
