@@ -11,6 +11,14 @@
     "troi",
     "time-tracking"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitalservice4germany/troi-library.git"
+  },
+  "bugs": {
+    "url": "https://github.com/digitalservice4germany/troi-library/issues"
+  },
+  "homepage": "https://github.com/digitalservice4germany/troi-library#readme",
   "author": "Christian Kaatz <christian.kaatz@digitalservice.bund.de>",
   "license": "MIT",
   "dependencies": {
