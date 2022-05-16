@@ -140,14 +140,14 @@ export default class TroiApiService {
   }
 
   async deleteTimeEntry(id) {
-    await this.makeRequest({
-      url: `${this.baseUrl}/billings/hours/${id}`,
+    return await this.makeRequest({
+      url: `/billings/hours/${id}`,
       method: "delete",
     });
   }
 
   async deleteTimeEntryViaServerSideProxy(id) {
-    await fetch(`/time_entries/${id}`, {
+    return await fetch(`/time_entries/${id}`, {
       method: "delete",
       headers: {
         "X-Troi-Username": this.userName,
