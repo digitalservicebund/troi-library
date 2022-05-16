@@ -109,6 +109,36 @@ export default class TroiApiService {
     });
   }
 
+  async updateTimeEntry(
+    calculationPositionId,
+    date,
+    hours,
+    description,
+    billingId
+  ) {
+    const payload = {
+      Client: {
+        Path: `/clients/${this.clientId}`,
+      },
+      CalculationPosition: {
+        Path: `/calculationPositions/${calculationPositionId}`,
+      },
+      Employee: {
+        Path: `/employees/${this.employeeId}`,
+      },
+      Date: date,
+      Quantity: hours,
+      Remark: description,
+    };
+
+    await this.makeRequest({
+      url: `/billings/hours/${billingId}`,
+      headers: { "Content-Type": "application/json" },
+      method: "put",
+      body: JSON.stringify(payload),
+    });
+  }
+
   async deleteTimeEntry(id) {
     await this.makeRequest({
       url: `/billings/hours/${id}`,
