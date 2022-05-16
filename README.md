@@ -13,6 +13,8 @@ npm i troi-library --save
 ```js
 import TroiApiService from "troi-library";
 
+const troiUrl = "https://<MY_ORG>.troi.software/api/v2/rest";
+
 const troiApi = new TroiApiService(troiUrl, username, password);
 await troiApi.initialize();
 

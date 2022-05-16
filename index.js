@@ -1,6 +1,6 @@
 import debugModule from "debug";
 import md5 from "crypto-js/md5.js";
-import fetch from "node-fetch";
+import fetch from "isomorphic-fetch";
 
 const debug = new debugModule("troi");
 
@@ -18,8 +18,7 @@ export default class TroiApiService {
     this.password = password;
     let passwordMd5 = md5(password);
     this.authHeader = {
-      Authorization:
-        "Basic " + Buffer.from(`${userName}:${passwordMd5}`).toString("base64"),
+      Authorization: "Basic " + btoa(`${userName}:${passwordMd5}`),
     };
   }
 
