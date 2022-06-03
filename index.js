@@ -30,7 +30,7 @@ export default class TroiApiService {
   async getClientId() {
     const client = await this.makeRequest({
       url: "/clients",
-      predicate: (obj) => obj.Name === "DigitalService4Germany GmbH",
+      predicate: (obj) => obj.Name === "DigitalService GmbH des Bundes",
     });
     return client.Id;
   }
