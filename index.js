@@ -11,36 +11,65 @@ export class AuthenticationFailed extends Error {
   }
 }
 
+/**
+ * Creates an instance of the TroiApiService.
+ * @class
+ */
 export default class TroiApiService {
-  constructor(baseUrl, userName, password) {
+  /**
+   * @constructor
+   * @param {Object} initializationObject - An object to initialize the service
+   * @param {string} initializationObject.baseUrl - The troi url for your company
+   * @param {string} initializationObject.clientName - The clientName to get the company id for bookings
+   * @param {string} initializationObject.username - The username to be used for all operations
+   * @param {string} initializationObject.password - The users password to be used for all operations
+   */
+  constructor({ baseUrl, clientName, username, password }) {
     this.baseUrl = baseUrl;
-    this.userName = userName;
+    this.username = username;
     this.password = password;
+    this.clientName = clientName;
     let passwordMd5 = md5(password);
     this.authHeader = {
-      Authorization: "Basic " + btoa(`${userName}:${passwordMd5}`),
+      Authorization: "Basic " + btoa(`${username}:${passwordMd5}`),
     };
   }
 
+  /**
+   * @name initialize
+   * @description initialization of the service
+   */
   async initialize() {
     this.clientId = await this.getClientId();
     this.employeeId = await this.getEmployeeId();
   }
 
+  /**
+   *
+   * @name getClientId
+   * @description retrieve the id of the client for future operations
+   * @returns {number} the clientId
+   */
   async getClientId() {
     const client = await this.makeRequest({
       url: "/clients",
-      predicate: (obj) => obj.Name === "DigitalService GmbH des Bundes",
+      predicate: (obj) => obj.Name === this.clientName,
     });
     return client.Id;
   }
 
+  /**
+   *
+   * @name getEmployeeId
+   * @description retrieve the id of the employee for future operations
+   * @returns {number} the employeeId
+   */
   async getEmployeeId() {
     const employees = await this.makeRequest({
       url: "/employees",
       params: {
         clientId: this.clientId,
-        employeeLoginName: this.userName,
+        employeeLoginName: this.username,
       },
     });
     return employees[0].Id;
@@ -150,7 +179,7 @@ export default class TroiApiService {
     return await fetch(`/time_entries/${id}`, {
       method: "delete",
       headers: {
-        "X-Troi-Username": this.userName,
+        "X-Troi-Username": this.username,
         "X-Troi-Password": this.password,
       },
     });
