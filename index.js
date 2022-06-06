@@ -75,6 +75,17 @@ export default class TroiApiService {
     return employees[0].Id;
   }
 
+  async getEmployeeIdForUsername(username) {
+    const employees = await this.makeRequest({
+      url: "/employees",
+      params: {
+        clientId: this.clientId,
+        employeeLoginName: username,
+      },
+    });
+    return employees[0] && employees[0].Id;
+  }
+
   async getCalculationPositions(favouritesOnly = true) {
     const calculationPositions = await this.makeRequest({
       url: "/calculationPositions",
