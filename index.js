@@ -86,6 +86,18 @@ export default class TroiApiService {
     return employees[0] && employees[0].Id;
   }
 
+  async getCalculationPositionsLastRecorded(employeeId) {
+    let response = await this.makeRequest({
+      url: "/billings/calculationPositionsLastRecorded",
+      params: {
+        clientId: this.clientId,
+        employeeId: employeeId,
+      },
+    });
+    if (!Array.isArray(response)) return false;
+    return response;
+  }
+
   async getCalculationPositions(favouritesOnly = true) {
     const calculationPositions = await this.makeRequest({
       url: "/calculationPositions",
