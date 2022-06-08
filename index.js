@@ -65,14 +65,7 @@ export default class TroiApiService {
    * @returns {number} the employeeId
    */
   async getEmployeeId() {
-    const employees = await this.makeRequest({
-      url: "/employees",
-      params: {
-        clientId: this.clientId,
-        employeeLoginName: this.username,
-      },
-    });
-    return employees[0].Id;
+    return this.getEmployeeIdForUsername(this.username);
   }
 
   async getEmployeeIdForUsername(username) {
