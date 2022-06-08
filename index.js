@@ -115,26 +115,30 @@ export default class TroiApiService {
   }
 
   async getTimeEntries(calculationPositionId, startDate, endDate) {
+    return this.getTimeEntriesForEmployeeId(this.employeeId, calculationPositionId, startDate, endDate);
+  }
+
+  async getTimeEntriesForEmployeeId(employeeId, calculationPositionId, startDate, endDate) {
     const timeEntries = await this.makeRequest({
       url: "/billings/hours",
       params: {
         clientId: this.clientId,
-        employeeId: this.employeeId,
+        employeeId: employeeId,
         calculationPositionId: calculationPositionId,
         startDate: startDate,
         endDate: endDate,
       },
     });
     return timeEntries
-      .map((obj) => {
-        return {
-          id: obj.id,
-          date: obj.Date,
-          hours: obj.Quantity,
-          description: obj.Remark,
-        };
-      })
-      .sort((a, b) => (a.date > b.date ? 1 : -1));
+        .map((obj) => {
+          return {
+            id: obj.id,
+            date: obj.Date,
+            hours: obj.Quantity,
+            description: obj.Remark,
+          };
+        })
+        .sort((a, b) => (a.date > b.date ? 1 : -1));
   }
 
   async postTimeEntry(calculationPositionId, date, hours, description) {
