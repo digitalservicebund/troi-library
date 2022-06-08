@@ -137,10 +137,10 @@ export default class TroiApiService {
 
   // date in the format "YYYY-MM-DD"
   async postTimeEntry(calculationPositionId, date, hours, description) {
-    this.postTimeEntryForEmployeeId(calculationPositionId, this.employeeId, date, hours, description);
+    this.postTimeEntryForEmployeeId(this.employeeId, calculationPositionId, date, hours, description);
   }
 
-  async postTimeEntryForEmployeeId(calculationPositionId, employeeId, date, hours, description) {
+  async postTimeEntryForEmployeeId(employeeId, calculationPositionId, date, hours, description) {
     const payload = {
       Client: {
         Path: `/clients/${this.clientId}`,
