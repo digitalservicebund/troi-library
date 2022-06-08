@@ -107,6 +107,7 @@ export default class TroiApiService {
     });
   }
 
+  // dates in the formats "YYYYMMDD"
   async getTimeEntries(calculationPositionId, startDate, endDate) {
     return this.getTimeEntriesForEmployeeId(this.employeeId, calculationPositionId, startDate, endDate);
   }
@@ -134,6 +135,7 @@ export default class TroiApiService {
         .sort((a, b) => (a.date > b.date ? 1 : -1));
   }
 
+  // date in the format "YYYY-MM-DD"
   async postTimeEntry(calculationPositionId, date, hours, description) {
     const payload = {
       Client: {
