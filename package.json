@@ -1,6 +1,6 @@
 {
   "name": "troi-library",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API library wrapper to interact with troi",
   "main": "index.js",
   "type": "module",
