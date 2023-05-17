@@ -225,4 +225,26 @@ export default class TroiApiService {
 
     throw new Error("predicate provided, but no responseObject fulfills it");
   }
+
+  async getCalendarEvents(type, startDate, endDate) {
+    const calendarEvents = await this.makeRequest({
+      url: "/calendarEvents",
+      params: {
+        start: startDate,
+        end: endDate,
+        type: type,
+      },
+    });
+    return calendarEvents
+      .map((obj) => {
+        return {
+          id: obj.id,
+          startDate: obj.Start,
+          endDate: obj.End,
+          subject: obj.Subject,
+          type: obj.Type,
+        };
+      })
+      .sort((a, b) => (a.startDate > b.startDate ? 1 : -1));
+  }
 }
