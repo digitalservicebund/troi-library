@@ -234,7 +234,8 @@ export default class TroiApiService {
         end: endDate,
         type: type,
       },
-    });
+    }) || [];
+
     return calendarEvents
       .map((obj) => {
         return {
