@@ -130,7 +130,7 @@ export default class TroiApiService {
       Remark: description,
     };
 
-    await this.makeRequest({
+    return await this.makeRequest({
       url: "/billings/hours",
       headers: { "Content-Type": "application/json" },
       method: "post",
@@ -160,7 +160,7 @@ export default class TroiApiService {
       Remark: description,
     };
 
-    await this.makeRequest({
+    return await this.makeRequest({
       url: `/billings/hours/${billingId}`,
       headers: { "Content-Type": "application/json" },
       method: "put",
@@ -195,9 +195,8 @@ export default class TroiApiService {
     options = { ...defaultOptions, ...options };
     const { url, method, params, headers, body } = options;
 
-    const requestUrl = `${this.baseUrl}${url}${
-      params ? `?${new URLSearchParams(params)}` : ""
-    }`;
+    const requestUrl = `${this.baseUrl}${url}${params ? `?${new URLSearchParams(params)}` : ""
+      }`;
     const requestOptions = {
       method: method,
       headers: { ...this.authHeader, ...headers },
@@ -226,7 +225,7 @@ export default class TroiApiService {
     throw new Error("predicate provided, but no responseObject fulfills it");
   }
 
-  async getCalendarEvents(type, startDate, endDate) {
+  async getCalendarEvents(startDate, endDate, type = "") {
     const calendarEvents = await this.makeRequest({
       url: "/calendarEvents",
       params: {
