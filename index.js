@@ -81,6 +81,7 @@ export default class TroiApiService {
       params: {
         clientId: this.clientId,
         favoritesOnly: `${favouritesOnly}`,
+        timeRecording: true
       },
     });
     return calculationPositions.map((obj) => {
