@@ -1,0 +1,14 @@
+{
+  "files": ["index.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "ES2019",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node16",
+    "declaration": true,
+  }
+}

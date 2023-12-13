@@ -2,7 +2,7 @@ import debugModule from "debug";
 import md5 from "crypto-js/md5.js";
 import fetch from "isomorphic-fetch";
 
-const debug = new debugModule("troi");
+const debug = debugModule("troi");
 
 export class AuthenticationFailed extends Error {
   constructor() {
@@ -11,11 +11,44 @@ export class AuthenticationFailed extends Error {
   }
 }
 
+export type TimeEntry = {
+  id: number,
+  date: string,
+  hours: number,
+  description: string,
+}
+
+export type CalenderEventType = "R" | "H" | "G" | "P" | "T"
+
+export type CalenderEvent = {
+  id: string;
+  startDate: string;
+  endDate: string;
+  subject: string;
+  type: CalenderEventType;
+}
+
+export type CalculationPosition = {
+  name: string;
+  id: number;
+}
+
 /**
  * Creates an instance of the TroiApiService.
  * @class
  */
 export default class TroiApiService {
+  baseUrl: string
+  clientName: string
+  username: string
+  password: string
+  authHeader: {
+    Authorization: string
+  };
+  clientId?: number;
+  employeeId?: number;
+
+
   /**
    * @constructor
    * @param {Object} initializationObject - An object to initialize the service
@@ -24,7 +57,12 @@ export default class TroiApiService {
    * @param {string} initializationObject.username - The username to be used for all operations
    * @param {string} initializationObject.password - The users password to be used for all operations
    */
-  constructor({ baseUrl, clientName, username, password }) {
+  constructor({ baseUrl, clientName, username, password }: {
+    baseUrl: string,
+    clientName: string,
+    username: string,
+    password: string,
+  }) {
     this.baseUrl = baseUrl;
     this.username = username;
     this.password = password;
@@ -48,74 +86,74 @@ export default class TroiApiService {
    *
    * @name getClientId
    * @description retrieve the id of the client for future operations
-   * @returns {number} the clientId
+   * @returns {Promise<number>} the clientId
    */
-  async getClientId() {
+  async getClientId(): Promise<number> {
     const client = await this.makeRequest({
       url: "/clients",
-      predicate: (obj) => obj.Name === this.clientName,
+      predicate: (obj: unknown) => (obj as any).Name === this.clientName,
     });
-    return client.Id;
+    return (client as any).Id;
   }
 
   /**
    *
    * @name getEmployeeId
    * @description retrieve the id of the employee for future operations
-   * @returns {number} the employeeId
+   * @returns {Promise<number>} the employeeId
    */
-  async getEmployeeId() {
+  async getEmployeeId(): Promise<number> {
     const employees = await this.makeRequest({
       url: "/employees",
       params: {
-        clientId: this.clientId,
+        clientId: this.clientId.toString(),
         employeeLoginName: this.username,
       },
     });
     return employees[0].Id;
   }
 
-  async getCalculationPositions(favouritesOnly = true) {
+  async getCalculationPositions(favouritesOnly: boolean = true): Promise<CalculationPosition[]> {
     const calculationPositions = await this.makeRequest({
       url: "/calculationPositions",
       params: {
-        clientId: this.clientId,
+        clientId: this.clientId.toString(),
         favoritesOnly: `${favouritesOnly}`,
-        timeRecording: true
+        timeRecording: true.toString()
       },
     });
-    return calculationPositions.map((obj) => {
+    return (calculationPositions as any).map((obj: unknown) => {
       return {
-        name: obj.DisplayPath,
-        id: obj.Id,
+        name: (obj as any).DisplayPath,
+        id: (obj as any).Id,
       };
     });
   }
 
-  async getTimeEntries(calculationPositionId, startDate, endDate) {
+  async getTimeEntries(calculationPositionId: number, startDate: string, endDate: string): Promise<TimeEntry[]> {
     const timeEntries = await this.makeRequest({
       url: "/billings/hours",
       params: {
-        clientId: this.clientId,
-        employeeId: this.employeeId,
-        calculationPositionId: calculationPositionId,
+        clientId: this.clientId.toString(),
+        employeeId: this.employeeId.toString(),
+        calculationPositionId: calculationPositionId.toString(),
         startDate: startDate,
         endDate: endDate,
       },
     });
-    return timeEntries
-      .map((obj) => {
+    return (timeEntries as any)
+      .map((obj: unknown): TimeEntry => {
         return {
-          id: obj.id,
-          date: obj.Date,
-          hours: obj.Quantity,
-          description: obj.Remark,
+          id: (obj as any).id,
+          date: (obj as any).Date,
+          hours: (obj as any).Quantity,
+          description: (obj as any).Remark,
         };
       })
-      .sort((a, b) => (a.date > b.date ? 1 : -1));
+      .sort((a: TimeEntry, b: TimeEntry) => (a.date > b.date ? 1 : -1));
   }
 
-  async postTimeEntry(calculationPositionId, date, hours, description) {
+  async postTimeEntry(calculationPositionId: number, date: string, hours: number, description: string): Promise<unknown> {
     const payload = {
       Client: {
         Path: `/clients/${this.clientId}`,
@@ -140,12 +178,12 @@ export default class TroiApiService {
   }
 
   async updateTimeEntry(
-    calculationPositionId,
-    date,
-    hours,
-    description,
-    billingId
-  ) {
+    calculationPositionId: number,
+    date: string,
+    hours: number,
+    description: string,
+    billingId: number
+  ): Promise<unknown> {
     const payload = {
       Client: {
         Path: `/clients/${this.clientId}`,
@@ -169,14 +207,14 @@ export default class TroiApiService {
     });
   }
 
-  async deleteTimeEntry(id) {
+  async deleteTimeEntry(id: number): Promise<unknown> {
     return await this.makeRequest({
       url: `/billings/hours/${id}`,
       method: "delete",
     });
   }
 
-  async deleteTimeEntryViaServerSideProxy(id) {
+  async deleteTimeEntryViaServerSideProxy(id: number): Promise<unknown> {
     return await fetch(`/time_entries/${id}`, {
       method: "delete",
       headers: {
@@ -186,7 +224,7 @@ export default class TroiApiService {
     });
   }
 
-  async makeRequest(options) {
+  async makeRequest(options: RequestInit & {url: string, params?: string | Record<string, string> | URLSearchParams | string[][], predicate?: (response: unknown) => boolean}): Promise<unknown> {
     const defaultOptions = {
       method: "get",
       params: undefined,
@@ -226,7 +264,7 @@ export default class TroiApiService {
     throw new Error("predicate provided, but no responseObject fulfills it");
   }
 
-  async getCalendarEvents(startDate, endDate, type = "") {
+  async getCalendarEvents(startDate: string, endDate: string, type: CalenderEventType | "" = ""): Promise<CalenderEvent[]> {
     const calendarEvents = await this.makeRequest({
       url: "/calendarEvents",
       params: {
@@ -236,7 +274,7 @@ export default class TroiApiService {
       },
     }) || [];
 
-    return calendarEvents
+    return (calendarEvents as any)
       .map((obj) => {
         return {
           id: obj.id,
@@ -246,6 +284,6 @@ export default class TroiApiService {
           type: obj.Type,
         };
       })
-      .sort((a, b) => (a.startDate > b.startDate ? 1 : -1));
+      .sort((a: CalenderEvent, b: CalenderEvent) => (a.startDate > b.startDate ? 1 : -1));
   }
 }
