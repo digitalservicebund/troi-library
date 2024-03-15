@@ -1,5 +1,8 @@
 # troi-library
 
+> [!WARNING]  
+> This library isn't maintained nor up to date anymore.
+
 Interact with troi api v2 without hassle. Originally build by [@nfelger](https://github.com/nfelger).
 
 # Setup
